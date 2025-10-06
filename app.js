@@ -30,7 +30,6 @@ const metadataSchema = Schema.object({
       description: "An array of the top 3 dominant color hex codes in the image.",
       items: Schema.string(),
     }),
-    has_people: Schema.boolean({ description: "A boolean value indicating if people are present." }),
   },
   required: ["description", "categories", "dominant_colors", "has_people"],
 });
@@ -60,9 +59,9 @@ export async function generateImageMetadata(ai, images, userInput = '') {
     });
     const metadataPromises = images.map(async (imageFile) => {
       const imagePart = await fileToGenerativePart(imageFile);
-      let prompt = `Analyze this image and generate the following metadata in JSON format: a concise 'description', an array of 5-10 'categories', the top 3 'dominant_colors' as hex codes, and a boolean for 'has_people'.`;
+      let prompt = `Analyze this image and generate the following metadata in JSON format: a concise 'description', an array of 4-7 'categories', and the top 3 'dominant_colors' as hex codes.`;
       if (userInput) {
-        prompt += ` Focus the analysis on the user's interest: "${userInput}".`;
+        prompt += ` Focus the analysis on: "${userInput}".`;
       }
       const result = await model.generateContent([prompt, imagePart]);
       return JSON.parse(result.response.text());
